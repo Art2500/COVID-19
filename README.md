@@ -4,6 +4,7 @@
 
 ## A.Abstract (tl;dr)  
 ## B.Introduction  
+Incidents of COVID-19 have obviously grown as the year goes on and more data in compiled. The goal of this research project is to better understand what raises one's chances of contracting the disease. 
 ## C.Hypothesis: Air pollution correlates with COVID 19 rates.   
 ## D.Datasets used  
 ## E.Descrption of analyses  
