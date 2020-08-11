@@ -1,4 +1,87 @@
+```{r setup, echo=FALSE,message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(kableExtra)
+library(HelpersMG)
+library(tidyr)
+library(dplyr)
+library(lubridate)
+library(scales)
+```
+ <!-- This chunk is a library loader --> 
+
+```{r load_data,cache=TRUE,echo=FALSE,message=FALSE}
+wget ("https://covid.ourworldindata.org/data/owid-covid-data.csv", destfile="./raw_data/owid-covid-data.csv")
+```
+ <!-- This is for loading the owid dataset --> 
+
+```{r,echo=FALSE,message=FALSE}
+Diabetestibble<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_cases,date)  %>% write_csv("./output/diabetes_total_cases.csv")
+```
+
+ <!-- diabetes related to cases -->  
+
+```{r,echo=FALSE,message=FALSE}
+Diadeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_deaths,date)  %>% write_csv("./output/diabetes_total_deaths.csv")
+```
+
+ <!-- diabetes related to deaths -->  
+ 
+```{r,echo=FALSE,message=FALSE}
+Cardiocases<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_cases,date)  %>% write_csv("./output/cardio_total_cases.csv")
+```
+ 
+ <!-- cardiovascular deaths to total cases -->  
+ 
+```{r,echo=FALSE,message=FALSE}
+Cardiodeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_deaths,date)  %>% write_csv("./output/cardio_total_deaths.csv")
+```
+ 
+ 
+ <!-- Cardiovascular Deaths to total deaths --> 
+```{r}
+deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US") %>% write_csv("./output/underlying_Causes_death.csv")
+
+ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
+
+```
+ <!-- This is plot of the CDC data on underlying conditions and death --> 
+
+This figure shows key factors causing the most deaths with COVID 19 are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second. Below is a table so you can also analyse the hard numbers.
+
+```{r}
+knitr::kable(deaths_underlying)
+```
+ <!-- This chunk for the underlying deaths table --> 
+
+
+```{r}
+medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% write_csv("./output/hospitalization_causes.csv")
+```
+ <!-- This chunk is for comparing hospital adult with underlying causes --> 
+
+```{r}
+
+ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`ADULTS-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
+```
+
+
+
+In this case we see in the COVID Center data that among hospitalizations in the US that hypertension was the largest underlying condition observed for adults. Respiratory afflictions like Asthma did not rank very highly. Below is a table of these results
+
+
+```{r}
+knitr::kable(medical_conditions)
+```
+
+
 ```{r}
 
 ```
+
+
+
+
+
+
 

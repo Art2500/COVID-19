@@ -1,0 +1,24 @@
+State,Condition,Number of COVID-19 Deaths,Age Group
+US,Influenza and pneumonia,57970,All ages
+US,Chronic lower respiratory diseases,11510,All ages
+US,Adult respiratory distress syndrome,19435,All ages
+US,Respiratory failure,46921,All ages
+US,Respiratory arrest,2908,All ages
+US,Other diseases of the respiratory system,4713,All ages
+US,Hypertensive diseases,29425,All ages
+US,Ischemic heart disease,14965,All ages
+US,Cardiac arrest,17867,All ages
+US,Cardiac arrhythmia,8222,All ages
+US,Heart failure,8996,All ages
+US,Cerebrovascular diseases,6525,All ages
+US,Other diseases of the circulatory system,7357,All ages
+US,Sepsis,11689,All ages
+US,Malignant neoplasms,6282,All ages
+US,Diabetes,21185,All ages
+US,Obesity,4342,All ages
+US,Alzheimer disease,4731,All ages
+US,Vascular and unspecified dementia,16075,All ages
+US,Renal failure,11484,All ages
+US,"Intentional and unintentional injury, poisoning, and other adverse events",4127,All ages
+US,All other conditions and causes (residual),65572,All ages
+US,COVID-19,139054,All ages

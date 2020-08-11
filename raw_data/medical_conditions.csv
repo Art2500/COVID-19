@@ -1,0 +1,20 @@
+Selected Underlying Medical Conditions of COVID-19-associated Hospitalizations from the COVID-NET Network (data downloaded on 8/11/2020),,,,,,,
+Centers for Disease Control and Prevention,,,,,,,
+YEAR,MEDICAL CONDITION,CHILDREN-COUNT,CHILDREN-PERCENT(%),ADULTS-COUNT,ADULTS-PERCENT(%),FEMALES (15-44 YR)-COUNT,FEMALES (15-44 YR)-PERCENT(%)
+2020,Asthma,30,13.2,1356,12.2,N/A,N/A
+2020,Cardiovascular disease,7,3.1,3395,30.5,N/A,N/A
+2020,Chronic lung disease,16,7,2046,18.4,N/A,N/A
+2020,Immune suppression,12,5.3,959,8.6,N/A,N/A
+2020,Metabolic disease,10,4.4,4500,40.4,N/A,N/A
+2020,Neurologic disease,31,13.6,2451,22,N/A,N/A
+2020,Other disease,40,17.5,895,8,N/A,N/A
+2020,No known condition,111,48.3,1049,9.3,N/A,N/A
+2020,Autoimmune disease ,1,0.4,298,2.7,N/A,N/A
+2020,Obesity,43,38.4,5080,50.2,N/A,N/A
+2020,Pregnancy,N/A,N/A,N/A,N/A,568,26.5
+2020,Renal disease,1,0.4,1648,14.8,N/A,N/A
+2020,Gastrointestinal/liver disease,2,0.9,562,5.1,N/A,N/A
+2020,Hypertension,3,1.3,5874,52.6,N/A,N/A
+,,,,,,,
+"The Coronavirus Disease 2019 (COVID-19)-Associated Hospitalization Surveillance Network (COVID-NET) hospitalization data are preliminary and subject to change as more data become available. In particular, case counts for recent hospital admissions are subject to lag. As data are received each week, prior case counts are updated accordingly. The denominator for each underlying medical condition is the total number of patients with non-missing data for that condition. Pregnancy percentage is calculated using the number of female cases of childbearing age (15 to 49 years) as the denominator.",,,,,,,
+"COVID-NET conducts population-based surveillance for laboratory-confirmed COVID-19-associated hospitalizations in children (less than 18 years of age) and adults. COVID-NET covers nearly 100 counties in the 10 Emerging Infections Program (EIP) states (CA, CO, CT, GA, MD, MN, NM, NY, OR, TN) and four Influenza Hospitalization Surveillance Project (IHSP) states (IA, MI, OH, and UT).",,,,,,,
