@@ -39,7 +39,7 @@ Cardiodeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, ca
  
  
  <!-- Cardiovascular Deaths to total deaths --> 
-```{r}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US") %>% write_csv("./output/underlying_Causes_death.csv")
 
 ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
@@ -49,18 +49,18 @@ ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COV
 
 This figure shows key factors causing the most deaths with COVID 19 are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second. Below is a table so you can also analyse the hard numbers.
 
-```{r}
+```{r,echo=FALSE,message=FALSE}
 knitr::kable(deaths_underlying)
 ```
  <!-- This chunk for the underlying deaths table --> 
 
 
-```{r}
+```{r,echo=FALSE,message=FALSE}
 medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% mutate(`ADULTS-COUNT` = as.integer(`ADULTS-COUNT`)) %>% write_csv("./output/hospitalization_causes.csv")
 ```
  <!-- This chunk is for comparing hospital adult with underlying causes --> 
 
-```{r}
+```{r,echo=FALSE,message=FALSE}
 
 ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`ADULTS-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
 ```
@@ -70,12 +70,12 @@ ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`ADULTS-COUNT`)) + geom_
 In this case we see in the COVID Center data that among hospitalizations in the US that hypertension was the largest underlying condition observed for adults. Respiratory afflictions like Asthma did not rank very highly. Below is a table of these results
 
 
-```{r}
+```{r,echo=FALSE,message=FALSE}
 knitr::kable(medical_conditions)
 ```
 
 
-```{r}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% write_csv("./output/kidhopsitalization.csv")
 ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`CHILDREN-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
 ```
@@ -84,7 +84,7 @@ ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`CHILDREN-COUNT`)) + geom_bar(s
  
  The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
  
-```{r}
+```{r,echo=FALSE,message=FALSE}
 knitr::kable(kidhospital)
 ```
  
