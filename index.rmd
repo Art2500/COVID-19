@@ -56,7 +56,7 @@ knitr::kable(deaths_underlying)
 
 
 ```{r}
-medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% write_csv("./output/hospitalization_causes.csv")
+medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% mutate(`ADULTS-COUNT` = as.integer(`ADULTS-COUNT`)) %>% write_csv("./output/hospitalization_causes.csv")
 ```
  <!-- This chunk is for comparing hospital adult with underlying causes --> 
 
@@ -76,10 +76,18 @@ knitr::kable(medical_conditions)
 
 
 ```{r}
-
+kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% write_csv("./output/kidhopsitalization.csv")
+ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`CHILDREN-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
 ```
 
-
+ <!-- THis is for ailments versus kid hospitalization -->  
+ 
+ The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
+ 
+```{r}
+knitr::kable(kidhospital)
+```
+ 
 
 
 
