@@ -10,7 +10,7 @@ library(scales)
 ```
  <!-- This chunk is a library loader --> 
 
-```{r load_data,cache=TRUE,echo=FALSE,message=FALSE}
+```{r load_data,cache=TRUE,echo=FALSE,message=FALSE,warning=FALSE}
 wget ("https://covid.ourworldindata.org/data/owid-covid-data.csv", destfile="./raw_data/owid-covid-data.csv")
 ```
  <!-- This is for loading the owid dataset --> 
@@ -80,7 +80,7 @@ kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`M
 ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`CHILDREN-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
 ```
 
- <!-- THis is for ailments versus kid hospitalization -->  
+ <!-- THis is for ailments versus Child hospitalization -->  
  
  The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
  
@@ -90,6 +90,11 @@ knitr::kable(kidhospital)
  
 
 
+```{r}
+provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending")
 
+knitr::kable(provisional_death_counts)
+```
+ <!-- This code is for pneumonia and covid deaths --> 
 
-
+The results show 
