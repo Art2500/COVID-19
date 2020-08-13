@@ -39,30 +39,57 @@ Cardiodeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, ca
  
  
  <!-- Cardiovascular Deaths to total deaths --> 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US") %>% write_csv("./output/underlying_Causes_death.csv")
+ 
+##  Introduction
 
-ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
+The aim of the following studies was to see if there was sufficient correlation between Respiratory Ailments and COVID-19 deaths and cases.
+ 
+
+
+## Section 1: Deaths with Underlying Conditions
+ 
+This section deals with death from COVID-19 where a underlying condition was also observed. The figured were derived from the CDC Dataset on underlying conditions. And the CDC dataset of Provisional Death Counts.
+ 
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 1__: Deaths with Underlying Conditions"}
+deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US",Condition !="COVID-19",Condition != "All other conditions and causes (residual)") %>% write_csv("./output/underlying_Causes_death.csv")
+
+ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+labs(y="Deaths", x="Conditions")+ggsave("./figures/Underlying_conditions.png")
 
 ```
  <!-- This is plot of the CDC data on underlying conditions and death --> 
 
-This figure shows key factors causing the most deaths with COVID 19 are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second. Below is a table so you can also analyse the hard numbers.
+This figure shows key factors causing the most deaths with COVID 19 are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second. Below is a table so you can also analyze the hard numbers.
 
-```{r,echo=FALSE,message=FALSE}
-knitr::kable(deaths_underlying)
+
+```{r,echo=FALSE,message=FALSE,fig.align='center'}
+knitr::kable(deaths_underlying) %>% kable_styling(full_width=FALSE)
 ```
  <!-- This chunk for the underlying deaths table --> 
 
 
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
+provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending") %>% rename(`All COVID-19 Deaths`=`All COVID-19 Deaths (U07.1)`, `Deaths with Pneumonia and COVID-19`=`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`)
+
+knitr::kable(provisional_death_counts) %>% kable_styling(full_width=FALSE)
+```
+ <!-- This is code for the provisional death counts table --> 
+ 
+This table shows a high correlation between the amount of COVID-19 deaths per week and that patient also having pneumonia. At times nearly half the patients who died from COVID-19 in a week also had pneumonia 
+
+
+## Section 2: Hospital Visits vs. Underlying Conditions  
+
+In this section we will explore if there is a correlation between COVID-19 hospitalizations and the underlying conditions that accompanied them. The data was derived from the CDC Covid-Net datasets on medical conditions for aduts and for children 
 ```{r,echo=FALSE,message=FALSE}
-medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% mutate(`ADULTS-COUNT` = as.integer(`ADULTS-COUNT`)) %>% write_csv("./output/hospitalization_causes.csv")
+medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% mutate(`ADULTS-COUNT` = as.integer(`ADULTS-COUNT`)) %>% write_csv("./output/hospitalization_causes.csv") %>% rename(`Adult Visits`="ADULTS-COUNT")
 ```
  <!-- This chunk is for comparing hospital adult with underlying causes --> 
 
-```{r,echo=FALSE,message=FALSE}
+```{r,echo=FALSE,message=FALSE,fig.align='center',fig.cap="__Figure 2__: Hospital Visits for Adults with accompanying conditions."}
 
-ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`ADULTS-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))
+ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`Adult Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+ggsave("./figures/Adult_Hospital_Visits.png")
 ```
 
 
@@ -70,31 +97,31 @@ ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`ADULTS-COUNT`)) + geom_
 In this case we see in the COVID Center data that among hospitalizations in the US that hypertension was the largest underlying condition observed for adults. Respiratory afflictions like Asthma did not rank very highly. Below is a table of these results
 
 
-```{r,echo=FALSE,message=FALSE}
-knitr::kable(medical_conditions)
+```{r,echo=FALSE,message=FALSE,fig.align='center'}
+knitr::kable(medical_conditions) %>% kable_styling(full_width=FALSE)
 ```
+ <!-- This chunk is for the table for medical conditions --> 
 
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% write_csv("./output/kidhopsitalization.csv")
-ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`CHILDREN-COUNT`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 3__: COVID-19 Children Hospitilaztions with accompanying conditions."}
+kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% rename(`Child Visits`="CHILDREN-COUNT") %>% write_csv("./output/kidhopsitalization.csv")
+ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`Child Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))+ggsave("./figures/Child_Hospital_Visits.png")
 ```
 
  <!-- THis is for ailments versus Child hospitalization -->  
  
  The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
  
-```{r,echo=FALSE,message=FALSE}
-knitr::kable(kidhospital)
+```{r,echo=FALSE,message=FALSE,fig.align='center'}
+knitr::kable(kidhospital) %>% kable_styling(full_width=FALSE)
 ```
  
 
 
-```{r}
-provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending")
 
-knitr::kable(provisional_death_counts)
-```
- <!-- This code is for pneumonia and covid deaths --> 
 
-The results show 
+ 
+
+
