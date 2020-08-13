@@ -53,8 +53,12 @@ This section deals with death from COVID-19 where a underlying condition was als
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 1__: Deaths with Underlying Conditions"}
 deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US",Condition !="COVID-19",Condition != "All other conditions and causes (residual)") %>% write_csv("./output/underlying_Causes_death.csv") %>% mutate(Respiratory = if_else(Condition %in% c("Adult respiratory distress syndrome", "Chronic lower respiratory diseases", "Influenza and pneumonia", "Other diseases of the respiratory system", "Respiratory arrest", "Respiratory failure"), TRUE, FALSE))
 
-ggplot(deaths_underlying, aes(reorder(Condition, -`Number of COVID-19 Deaths`))) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+labs(y="Deaths", x="Conditions")+ggsave("./figures/Underlying_conditions.png")
-
+ggplot(deaths_underlying, aes(reorder(Condition, -`Number of COVID-19 Deaths`),fill = Respiratory)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+labs(y="Deaths", x="Conditions")+ggsave("./figures/Underlying_conditions.png")
+knitr::kable(anova(lm(`Number of COVID-19 Deaths`~ `Respiratory`, data = deaths_underlying)),
+digits = 3,
+format = "html",
+caption = "Table 2: Provisional Death Anova",
+table.attr = "style='width:70%;'") %>% kable_styling(position = "center")
 ```
  <!-- This is plot of the CDC data on underlying conditions and death --> 
 
