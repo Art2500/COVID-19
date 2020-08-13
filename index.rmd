@@ -15,25 +15,25 @@ wget ("https://covid.ourworldindata.org/data/owid-covid-data.csv", destfile="./r
 ```
  <!-- This is for loading the owid dataset --> 
 
-```{r,echo=FALSE,message=FALSE}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 Diabetestibble<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_cases,date)  %>% write_csv("./output/diabetes_total_cases.csv")
 ```
 
  <!-- diabetes related to cases -->  
 
-```{r,echo=FALSE,message=FALSE}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 Diadeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_deaths,date)  %>% write_csv("./output/diabetes_total_deaths.csv")
 ```
 
  <!-- diabetes related to deaths -->  
  
-```{r,echo=FALSE,message=FALSE}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 Cardiocases<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_cases,date)  %>% write_csv("./output/cardio_total_cases.csv")
 ```
  
  <!-- cardiovascular deaths to total cases -->  
  
-```{r,echo=FALSE,message=FALSE}
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
 Cardiodeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_deaths,date)  %>% write_csv("./output/cardio_total_deaths.csv")
 ```
  
@@ -51,9 +51,9 @@ The aim of the following studies was to see if there was sufficient correlation 
 This section deals with death from COVID-19 where a underlying condition was also observed. The figured were derived from the CDC Dataset on underlying conditions. And the CDC dataset of Provisional Death Counts.
  
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 1__: Deaths with Underlying Conditions"}
-deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US",Condition !="COVID-19",Condition != "All other conditions and causes (residual)") %>% write_csv("./output/underlying_Causes_death.csv")
+deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US",Condition !="COVID-19",Condition != "All other conditions and causes (residual)") %>% write_csv("./output/underlying_Causes_death.csv") %>% mutate(Respiratory = if_else(Condition %in% c("Adult respiratory distress syndrome", "Chronic lower respiratory diseases", "Influenza and pneumonia", "Other diseases of the respiratory system", "Respiratory arrest", "Respiratory failure"), TRUE, FALSE))
 
-ggplot(deaths_underlying, aes(Condition)) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+labs(y="Deaths", x="Conditions")+ggsave("./figures/Underlying_conditions.png")
+ggplot(deaths_underlying, aes(reorder(Condition, -`Number of COVID-19 Deaths`))) + geom_bar(aes(weight = `Number of COVID-19 Deaths`)) + theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+labs(y="Deaths", x="Conditions")+ggsave("./figures/Underlying_conditions.png")
 
 ```
  <!-- This is plot of the CDC data on underlying conditions and death --> 
@@ -62,7 +62,7 @@ This figure shows key factors causing the most deaths with COVID 19 are respirat
 
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
-knitr::kable(deaths_underlying) %>% kable_styling(full_width=FALSE)
+knitr::kable(deaths_underlying %>% select(-c(State, `Age Group`)) %>% arrange(desc(`Number of COVID-19 Deaths`))) %>% kable_styling(full_width=FALSE)
 ```
  <!-- This chunk for the underlying deaths table --> 
 
@@ -72,7 +72,9 @@ knitr::kable(deaths_underlying) %>% kable_styling(full_width=FALSE)
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
 provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending") %>% rename(`All COVID-19 Deaths`=`All COVID-19 Deaths (U07.1)`, `Deaths with Pneumonia and COVID-19`=`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% write_csv("./output/provionsal_death_counts.csv")
 
-knitr::kable(provisional_death_counts) %>% kable_styling(full_width=FALSE)
+knitr::kable(provisional_death_counts %>% select(-c(State, Indicator)) %>% filter(`All COVID-19 Deaths` != 0) %>% mutate(`Percent of COVID Deaths involving Pneumonia` = signif(100.0 * `Deaths with Pneumonia and COVID-19` / `All COVID-19 Deaths`, 4))) %>% kable_styling(full_width=FALSE)
+
+
 ```
  <!-- This is code for the provisional death counts table --> 
  
@@ -101,7 +103,7 @@ medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% se
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center',fig.cap="__Figure 2__: Hospital Visits for Adults with accompanying conditions."}
 
-ggplot(medical_conditions, aes(x=`MEDICAL CONDITION`, y=`Adult Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+ggsave("./figures/Adult_Hospital_Visits.png")
+ggplot(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known condition" & `MEDICAL CONDITION` != "Other disease"), aes(reorder(`MEDICAL CONDITION`, -`Adult Visits`), `Adult Visits`)) + xlab("Medical Condition")  + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+ggsave("./figures/Adult_Hospital_Visits.png")
 ```
 
 
@@ -110,7 +112,8 @@ In this case we see in the COVID Center data that among hospitalizations in the 
 
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
-knitr::kable(medical_conditions) %>% kable_styling(full_width=FALSE)
+knitr::kable(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known condition" & `MEDICAL CONDITION` != "Other disease") %>% arrange(desc(`Adult Visits`))) %>% kable_styling(full_width=FALSE)
+
 ```
  <!-- This chunk is for the table for medical conditions --> 
 
@@ -118,8 +121,9 @@ knitr::kable(medical_conditions) %>% kable_styling(full_width=FALSE)
 
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 3__: COVID-19 Children Hospitilaztions with accompanying conditions."}
-kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% rename(`Child Visits`="CHILDREN-COUNT") %>% write_csv("./output/kidhopsitalization.csv")
-ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`Child Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))+ggsave("./figures/Child_Hospital_Visits.png")
+kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy"&`MEDICAL CONDITION`!="No known condition"&`MEDICAL CONDITION`!="Other disease")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% rename(`Child Visits`="CHILDREN-COUNT") %>% write_csv("./output/kidhopsitalization.csv")
+ggplot(kidhospital, aes(reorder(`MEDICAL CONDITION`, -`Child Visits`), y=`Child Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))+ggsave("./figures/Child_Hospital_Visits.png")
+
 ```
 
  <!-- THis is for ailments versus Child hospitalization -->  
@@ -127,7 +131,7 @@ ggplot(kidhospital, aes(x=`MEDICAL CONDITION`, y=`Child Visits`)) + geom_bar(sta
  The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
  
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
-knitr::kable(kidhospital) %>% kable_styling(full_width=FALSE)
+knitr::kable(kidhospital %>% arrange(desc(`Child Visits`))) %>% kable_styling(full_width=FALSE)
 ```
  
 
