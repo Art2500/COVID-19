@@ -70,13 +70,25 @@ knitr::kable(deaths_underlying) %>% kable_styling(full_width=FALSE)
 
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center'}
-provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending") %>% rename(`All COVID-19 Deaths`=`All COVID-19 Deaths (U07.1)`, `Deaths with Pneumonia and COVID-19`=`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`)
+provisional_death_counts<-read_csv("./raw_data/Provisional_Death_Counts.csv") %>% select(State,Indicator,`Start week`,`All COVID-19 Deaths (U07.1)`,`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% filter(Indicator == "Week-ending") %>% rename(`All COVID-19 Deaths`=`All COVID-19 Deaths (U07.1)`, `Deaths with Pneumonia and COVID-19`=`Deaths with Pneumonia and COVID-19 (J12.0-J18.9 and U07.1)`) %>% write_csv("./output/provionsal_death_counts.csv")
 
 knitr::kable(provisional_death_counts) %>% kable_styling(full_width=FALSE)
 ```
  <!-- This is code for the provisional death counts table --> 
  
 This table shows a high correlation between the amount of COVID-19 deaths per week and that patient also having pneumonia. At times nearly half the patients who died from COVID-19 in a week also had pneumonia 
+
+
+```{r}
+knitr::kable(anova(lm(`All COVID-19 Deaths`~ `Deaths with Pneumonia and COVID-19`, data = read_csv("./output/provionsal_death_counts.csv"))),
+			 digits = 3, 
+			 format = "html", 
+			 caption = "Table 2: Provisional Death Anova",
+			 table.attr = "style='width:70%;'") %>% kable_styling(position = "center")
+```
+ <!-- Chunk for the ANOVA analysis --> 
+ 
+ The ANOVA reveals a very high F value. You would expect this value to be around 1 but a large value means the null hypothesis is wrong.
 
 
 ## Section 2: Hospital Visits vs. Underlying Conditions  
