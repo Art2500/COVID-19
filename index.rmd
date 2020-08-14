@@ -16,37 +16,7 @@ library(dplyr)
 library(lubridate)
 library(scales)
 ```
- <!-- This chunk is a library loader --> 
 
-```{r load_data,cache=TRUE,echo=FALSE,message=FALSE,warning=FALSE}
-wget ("https://covid.ourworldindata.org/data/owid-covid-data.csv", destfile="./raw_data/owid-covid-data.csv")
-```
- <!-- This is for loading the owid dataset --> 
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-Diabetestibble<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_cases,date)  %>% write_csv("./output/diabetes_total_cases.csv")
-```
-
- <!-- diabetes related to cases -->  
-
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-Diadeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, diabetes_prevalence,total_deaths,date)  %>% write_csv("./output/diabetes_total_deaths.csv")
-```
-
- <!-- diabetes related to deaths -->  
- 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-Cardiocases<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_cases,date)  %>% write_csv("./output/cardio_total_cases.csv")
-```
- 
- <!-- cardiovascular deaths to total cases -->  
- 
-```{r,echo=FALSE,message=FALSE,warning=FALSE}
-Cardiodeaths<-read_csv("./raw_data/owid-covid-data.csv") %>% select(location, cardiovasc_death_rate,total_deaths,date)  %>% write_csv("./output/cardio_total_deaths.csv")
-```
- 
- 
- <!-- Cardiovascular Deaths to total deaths --> 
  
 ##  Introduction
 
