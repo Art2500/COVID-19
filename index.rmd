@@ -1,3 +1,11 @@
+---
+title: "Final Project"
+author: "Arthur Moore"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: html_document
+---
+
+
 ```{r setup, echo=FALSE,message=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
@@ -48,7 +56,7 @@ The aim of the following studies was to see if there was sufficient correlation 
 
 ## Section 1: Deaths with Underlying Conditions
  
-This section deals with death from COVID-19 where a underlying condition was also observed. The figured were derived from the CDC Dataset on underlying conditions. And the CDC dataset of Provisional Death Counts.
+This section deals with death from COVID-19 where a underlying condition was also observed. The figures were derived from the CDC Dataset on underlying conditions. And the CDC dataset of Provisional Death Counts. 
  
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 1__: Deaths with Underlying Conditions"}
 deaths_underlying<-read_csv("./raw_data/conditions_deaths.csv") %>% select(State,Condition,`Number of COVID-19 Deaths`,`Age Group`) %>% filter(`Age Group` =="All ages" & State=="US",Condition !="COVID-19",Condition != "All other conditions and causes (residual)") %>% write_csv("./output/underlying_Causes_death.csv") %>% mutate(Respiratory = if_else(Condition %in% c("Adult respiratory distress syndrome", "Chronic lower respiratory diseases", "Influenza and pneumonia", "Other diseases of the respiratory system", "Respiratory arrest", "Respiratory failure"), TRUE, FALSE))
@@ -60,9 +68,9 @@ format = "html",
 caption = "Table 2: Provisional Death Anova",
 table.attr = "style='width:70%;'") %>% kable_styling(position = "center")
 ```
- <!-- This is plot of the CDC data on underlying conditions and death --> 
+ <!-- This chunk was for writing the output of the underlying conditions graph. The code takes the dataset and filters the conditions. It then produces an ANOVA analysis on the information --> 
 
-This figure shows key factors causing the most deaths with COVID 19 are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second. Below is a table so you can also analyze the hard numbers.
+This figure shows key factors causing the most deaths with COVID 19 in a single category are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second.  The ANOVA analysis did not show significant correlation between respiratory ailments as the p value was above 0.05 Below is a table so you can also analyze the hard numbers.
 
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
@@ -80,36 +88,26 @@ knitr::kable(provisional_death_counts %>% select(-c(State, Indicator)) %>% filte
 
 
 ```
- <!-- This is code for the provisional death counts table --> 
+ <!-- This is code for the provisional death counts table. It takes the dataset filters the respiratory conditions and makes a table with a percentage alongside it  --> 
  
-This table shows a high correlation between the amount of COVID-19 deaths per week and that patient also having pneumonia. At times nearly half the patients who died from COVID-19 in a week also had pneumonia 
+This table shows a high correlation between the amount of COVID-19 deaths per week and that patient also having pneumonia. But this data is only over the course of around 2 months. I could make more definite analysis on it if a few more months were present. 
 
-
-```{r}
-knitr::kable(anova(lm(`All COVID-19 Deaths`~ `Deaths with Pneumonia and COVID-19`, data = read_csv("./output/provionsal_death_counts.csv"))),
-			 digits = 3, 
-			 format = "html", 
-			 caption = "Table 2: Provisional Death Anova",
-			 table.attr = "style='width:70%;'") %>% kable_styling(position = "center")
-```
- <!-- Chunk for the ANOVA analysis --> 
- 
- The ANOVA reveals a very high F value. You would expect this value to be around 1 but a large value means the null hypothesis is wrong.
 
 
 ## Section 2: Hospital Visits vs. Underlying Conditions  
 
-In this section we will explore if there is a correlation between COVID-19 hospitalizations and the underlying conditions that accompanied them. The data was derived from the CDC Covid-Net datasets on medical conditions for aduts and for children 
+In this section we will explore if there is a correlation between COVID-19 hospitalizations and the underlying conditions that accompanied them. The data was derived from the CDC Covid-Net datasets on medical conditions for adults and for children 
+
 ```{r,echo=FALSE,message=FALSE}
 medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`ADULTS-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy") %>% mutate(`ADULTS-COUNT` = as.integer(`ADULTS-COUNT`)) %>% write_csv("./output/hospitalization_causes.csv") %>% rename(`Adult Visits`="ADULTS-COUNT")
 ```
- <!-- This chunk is for comparing hospital adult with underlying causes --> 
+ <!-- This chunk is for comparing hospital adult with underlying causes it reads the dataset filters out conditions like pregnancy and renames osme columns --> 
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center',fig.cap="__Figure 2__: Hospital Visits for Adults with accompanying conditions."}
 
 ggplot(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known condition" & `MEDICAL CONDITION` != "Other disease"), aes(reorder(`MEDICAL CONDITION`, -`Adult Visits`), `Adult Visits`)) + xlab("Medical Condition")  + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+ggsave("./figures/Adult_Hospital_Visits.png")
 ```
-
+ <!-- This chunk makes a bar graph of the adult hospitalizations. it filters out no known condition --> 
 
 
 In this case we see in the COVID Center data that among hospitalizations in the US that hypertension was the largest underlying condition observed for adults. Respiratory afflictions like Asthma did not rank very highly. Below is a table of these results
@@ -126,19 +124,25 @@ knitr::kable(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known cond
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.cap="__Figure 3__: COVID-19 Children Hospitilaztions with accompanying conditions."}
 kidhospital<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% select(`MEDICAL CONDITION`,`CHILDREN-COUNT`) %>% filter(`MEDICAL CONDITION`!="Pregnancy"&`MEDICAL CONDITION`!="No known condition"&`MEDICAL CONDITION`!="Other disease")%>% mutate(`CHILDREN-COUNT` = as.integer(`CHILDREN-COUNT`)) %>% rename(`Child Visits`="CHILDREN-COUNT") %>% write_csv("./output/kidhopsitalization.csv")
-ggplot(kidhospital, aes(reorder(`MEDICAL CONDITION`, -`Child Visits`), y=`Child Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))+ggsave("./figures/Child_Hospital_Visits.png")
+ggplot(kidhospital, aes(reorder(`MEDICAL CONDITION`, -`Child Visits`), y=`Child Visits`)) + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))+ggsave("./figures/Child_Hospital_Visits.png") +labs(x= "Medical Condition")
 
 ```
 
- <!-- THis is for ailments versus Child hospitalization -->  
- 
- The most likely underlying cause when it came to children was having no known other causes to go along with the COVID 19 diagnosis. 
- 
+ <!-- THis is for ailments versus Child hospitalization stats. It takes the data filters out conditions like pregnancy and no known condition and renames some of the columns. It saves figure and writes a csv file  -->  
+
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
 knitr::kable(kidhospital %>% arrange(desc(`Child Visits`))) %>% kable_styling(full_width=FALSE)
 ```
- 
+ <!-- This chunk makes a table of the previous children hospitalization records -->  
 
+ 
+The most likely underlying cause when it came to children was having was obesity with Asthma coming in third. In both the cases of children and adults a respiratory ailment was not the number underlying condition to go with hospitalization.  
+
+
+## Conclusion  
+
+While incidents of respiratory ailments were high among deaths I did not find enough data to significantly reject my null hypothesis. My data does show that a high percentage of COVID-19 deaths are comorbid with pneumonia. In the case of hospitalizations the most like underlying conditions were obesity and hypertension. For further analysis I would need to gather more data from more countries as the bulk of my data came from America. Americans may skew some of the numbers as obesity and hypertension are large scale American issues. 
+ 
 
 
 
