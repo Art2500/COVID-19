@@ -4,6 +4,7 @@ author: "Arthur Moore"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: html_document
 ---
+ <!-- YAML header --> 
 
 
 ```{r setup, echo=FALSE,message=FALSE}
@@ -16,7 +17,7 @@ library(dplyr)
 library(lubridate)
 library(scales)
 ```
-
+ <!-- This chunk loads the libraries -->  
  
 ##  Introduction
 
@@ -38,7 +39,7 @@ format = "html",
 caption = "Table 2: Provisional Death Anova",
 table.attr = "style='width:70%;'") %>% kable_styling(position = "center")
 ```
- <!-- This chunk was for writing the output of the underlying conditions graph. The code takes the dataset and filters the conditions. It then produces an ANOVA analysis on the information --> 
+ <!-- This chunk was for writing the output of the underlying conditions graph. The code takes the dataset and filters the conditions. It then produces a graph an ANOVA analysis on the information --> 
 
 This figure shows key factors causing the most deaths with COVID 19 in a single category are respiratory based. Influenza/ pneumonia take the top spot with Respiratory failure coming in second.  The ANOVA analysis did not show significant correlation between respiratory ailments as the p value was above 0.05 Below is a table so you can also analyze the hard numbers.
 
@@ -63,6 +64,7 @@ knitr::kable(provisional_death_counts %>% select(-c(State, Indicator)) %>% filte
 This table shows a high correlation between the amount of COVID-19 deaths per week and that patient also having pneumonia. But this data is only over the course of around 2 months. I could make more definite analysis on it if a few more months were present. 
 
 
+ <!-- This shows what i thought of my section 1 analysis -->  
 
 ## Section 2: Hospital Visits vs. Underlying Conditions  
 
@@ -77,11 +79,12 @@ medical_conditions<-read_csv("./raw_data/medical_conditions.csv", skip=2) %>% se
 
 ggplot(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known condition" & `MEDICAL CONDITION` != "Other disease"), aes(reorder(`MEDICAL CONDITION`, -`Adult Visits`), `Adult Visits`)) + xlab("Medical Condition")  + geom_bar(stat="identity")+theme(axis.text.x = element_text(angle = 75, vjust = 1, hjust = 1))+ggsave("./figures/Adult_Hospital_Visits.png")
 ```
- <!-- This chunk makes a bar graph of the adult hospitalizations. it filters out no known condition --> 
+ <!-- This chunk makes a bar graph of the adult hospitalizations. By condition it filters out no known condition and saves the file in figures --> 
 
 
 In this case we see in the COVID Center data that among hospitalizations in the US that hypertension was the largest underlying condition observed for adults. Respiratory afflictions like Asthma did not rank very highly. Below is a table of these results
 
+ <!-- Shows what I thought of my data on adult hospitalizations -->  
 
 ```{r,echo=FALSE,message=FALSE,fig.align='center'}
 knitr::kable(medical_conditions %>% filter(`MEDICAL CONDITION` != "No known condition" & `MEDICAL CONDITION` != "Other disease") %>% arrange(desc(`Adult Visits`))) %>% kable_styling(full_width=FALSE)
@@ -114,6 +117,7 @@ The most likely underlying cause when it came to children was having was obesity
 While incidents of respiratory ailments were high among deaths I did not find enough data to significantly reject my null hypothesis. My data does show that a high percentage of COVID-19 deaths are comorbid with pneumonia. In the case of hospitalizations the most like underlying conditions were obesity and hypertension. For further analysis I would need to gather more data from more countries as the bulk of my data came from America. Americans may skew some of the numbers as obesity and hypertension are large scale American issues. 
  
 
+ <!-- Shows my final thoughts -->  
 
 
  
